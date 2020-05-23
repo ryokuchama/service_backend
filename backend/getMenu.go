@@ -1,4 +1,4 @@
-package database
+package main
 
 import (
 	"github.com/jinzhu/gorm"
@@ -6,19 +6,11 @@ import (
 )
 
 type pickupMenu struct {
-	Id uint
+	ID uint
 	Name string
 	Price uint
 	Describe string
 	Genre uint
-}
-
-type writeDB struct {
-	Id uint
-	Name string
-	Price uint
-	Count uint
-	Date string
 }
 
 func gormConnect() *gorm.DB {
@@ -28,7 +20,7 @@ func gormConnect() *gorm.DB {
 	protocol := "tcp(:8080)"
 	DBname := "menu"
 
-	connect := user+":"+pass+"@";protocol+"/"+DBname
+	connect := user+":"+pass+"@"+protocol+"/"+DBname
 	db, err := gorm.Open(DBtype, connect)
 
 	if err != nil {
@@ -37,11 +29,11 @@ func gormConnect() *gorm.DB {
 	return db
 }
 
-func main() {
-	db:= gormConnect()
+func getMenu() []pickupMenu{
+	db := gormConnect()
 	defer db.Close()
 
-	showMenu := []pickupMenu{}
-	
-
+	var showMenu []pickupMenu
+	db.Order("Genre desc").Find(&showMenu)
+	return showMenu
 }
