@@ -6,6 +6,7 @@ import (
 )
 
 type pickupMenu struct {
+	gorm.Model
 	ID uint
 	Name string
 	Price uint
@@ -20,7 +21,7 @@ func gormConnect() *gorm.DB {
 	protocol := "tcp(:8080)"
 	DBname := "menu"
 
-	connect := user+":"+pass+"@"+protocol+"/"+DBname
+	connect := user+":"+pass+"@"+protocol+"/"+DBname+"?parseTime=True"
 	db, err := gorm.Open(DBtype, connect)
 
 	if err != nil {
@@ -31,6 +32,7 @@ func gormConnect() *gorm.DB {
 
 func getMenu() []pickupMenu{
 	db := gormConnect()
+
 	defer db.Close()
 
 	var showMenu []pickupMenu

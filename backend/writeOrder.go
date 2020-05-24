@@ -20,7 +20,7 @@ func gormConnection() *gorm.DB {
 	protocol := "tcp(:8080)"
 	DBname := "order"
 
-	connect := user+":"+pass+"@"+protocol+"/"+DBname
+	connect := user+":"+pass+"@"+protocol+"/"+DBname+"?parseTime=True"
 	db, err := gorm.Open(DBtype, connect)
 
 	if err != nil {
