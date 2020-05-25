@@ -3,10 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"database/sql"
 	"github.com/gin-gonic/gin"
-	"github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
 )
 
 type menu struct {
@@ -16,8 +13,20 @@ type menu struct {
 	text string
 }
 
+func postToJson() {
+	router := gin.Default()
+	router.POST("postjson", func(c *gin.Context){
+		var json jsonRequest
+		if err := c.ShouldBindJSON(&json); err != nil{
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"str": json.FieldStr, "int": json.FieldInt, "bool": json.FieldBool})
+		write()
+	})
+}
 
-func getRequest () {
+func main () {
 	r := gin.Default()
 	r.GET("/ping", func(c * gin.Context){
 		c.JSON(200, gin.H{
@@ -26,12 +35,4 @@ func getRequest () {
 	})
 	fmt.Printf("Server Side")
 	r.Run()
-}
-
-func getMenu () {
-
-}
-
-func writeReserve () {
-
 }
