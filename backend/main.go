@@ -13,9 +13,9 @@ type menu struct {
 	text string
 }
 
-func postToJson() {
+func postToJSON() {
 	router := gin.Default()
-	router.POST("postjson", func(c *gin.Context){
+	router.GET("/getMenu", func(c *gin.Context){
 		var json jsonRequest
 		if err := c.ShouldBindJSON(&json); err != nil{
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -26,9 +26,9 @@ func postToJson() {
 	})
 }
 
-func main () {
+func writeOrder () {
 	r := gin.Default()
-	r.GET("/ping", func(c * gin.Context){
+	r.POST("/write", func(c * gin.Context){
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
