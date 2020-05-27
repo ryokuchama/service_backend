@@ -13,26 +13,30 @@ type menu struct {
 	text string
 }
 
-func postToJSON() {
+func main () {
 	router := gin.Default()
-	router.GET("/getMenu", func(c *gin.Context){
-		var json jsonRequest
-		if err := c.ShouldBindJSON(&json); err != nil{
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"str": json.FieldStr, "int": json.FieldInt, "bool": json.FieldBool})
-		write()
-	})
-}
-
-func writeOrder () {
-	r := gin.Default()
-	r.POST("/write", func(c * gin.Context){
+	router.GET("/getmenu", func(c*gin.Context) {
+		pickupmenu := getMenu()
 		c.JSON(200, gin.H{
-			"message": "pong",
+			"menu" : pickupmenu,
 		})
 	})
-	fmt.Printf("Server Side")
-	r.Run()
+	router.POST("/insert", func(c*gin.Context) {
+		var form menu
+
+		if err := c.Bind(&form); err != nil {
+			pickupmenu := getMenu()
+			c.JSON(200, gin.H{
+				"menu" : pickupmenu,
+			})
+		}
+	})
+	router.PUT("/update", func(c*gin.Context) {
+
+	})
+	router.DELETE("/delete")
+
+	router.POST("/order")
+
+	router.Run()
 }
