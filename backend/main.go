@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"net/http"
 	"github.com/gin-gonic/gin"
 )
@@ -32,9 +33,21 @@ func main () {
 		}
 	})
 	router.PUT("/update", func(c*gin.Context) {
-
+		n := c.Param("id")
+		id, err := strconv.Atoi(n)
+        if err != nil {
+            panic("ERROR")
+		}
+		updatemenu := c.PostForm("getmenu")
+		
 	})
-	router.DELETE("/delete")
+	router.DELETE("/delete", func(c*gin.Context) {
+		n := c.Param("id")
+		id, err := strconv.Atoi(n)
+        if err != nil {
+            panic("ERROR")
+        }
+	})
 
 	router.POST("/order")
 
