@@ -16,8 +16,8 @@ type pickupMenu struct {
 
 func gormConnect() *gorm.DB {
 	DBtype := "mysql"
-	user := "tkaji"
-	pass := "argentina7"
+	user := "user"
+	pass := "pass"
 	protocol := "tcp(:8080)"
 	DBname := "menu"
 
