@@ -1,9 +1,9 @@
 package main
 
 import (
-	"strconv"
-	"net/http"
-	"github.com/gin-gonic/gin"
+	"github.com/ant0ine/go-json-rest/rest"
+    "log"
+    "net/http"
 )
 
 type menu struct {
@@ -14,41 +14,16 @@ type menu struct {
 }
 
 func main () {
-	router := gin.Default()
-	router.GET("/getmenu", func(c*gin.Context) {
-		pickupmenu := getMenu()
-		c.JSON(200, gin.H{
-			"menu" : pickupmenu,
-		})
-	})
-	router.POST("/insert", func(c*gin.Context) {
-		var form menu
-
-		if err := c.Bind(&form); err != nil {
-			pickupmenu := getMenu()
-			c.JSON(200, gin.H{
-				"menu" : pickupmenu,
-			})
-		}
-	})
-	router.PUT("/update", func(c*gin.Context) {
-		n := c.Param("id")
-		id, err := strconv.Atoi(n)
-        if err != nil {
-            panic("ERROR")
-		}
-		updatemenu := c.PostForm("getmenu")
-
-	})
-	router.DELETE("/delete", func(c*gin.Context) {
-		n := c.Param("id")
-		id, err := strconv.Atoi(n)
-        if err != nil {
-            panic("ERROR")
-        }
-	})
-
-	router.POST("/order")
-
-	router.Run()
+	api := rest.NewApi()
+	api.Use(rest.DefaultDevStack...)
+	router, err := rest.MakeRouter(
+		rest.Get("/getAllMenu", getAllMenu),
+		rest.Post("/writeOrder", write),
+		rest.Post("/addMenu", addMenu),
+		rest.Delete("/deleteMenu", deleteMenu),
+	)
+	if err != nil {
+		log.Fatal(router)
+	}
+	log.Fatal(http.ListenAndServe(":8080", api.MakeHandler()))
 }
