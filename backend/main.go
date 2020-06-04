@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sync"
 	"github.com/ant0ine/go-json-rest/rest"
     "log"
     "net/http"
@@ -26,4 +27,11 @@ func main () {
 		log.Fatal(router)
 	}
 	log.Fatal(http.ListenAndServe(":8080", api.MakeHandler()))
+}
+
+var store = map[string] *menu{}
+var lock = sync.RWMutex{}
+
+func getAllMenu(w rest.ResponseWriter, r *rest.Request) {
+	
 }
