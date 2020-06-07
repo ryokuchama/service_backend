@@ -4,12 +4,13 @@ import (
 	"sync"
 	"github.com/ant0ine/go-json-rest/rest"
     "log"
-    "net/http"
+	"net/http"
+
 )
 
 // メニュー構造体
 type menu struct {
-	id int
+	Id int
 	name string
 	price int
 	text string
@@ -30,7 +31,7 @@ func main () {
 	log.Fatal(http.ListenAndServe(":8080", api.MakeHandler()))
 }
 
-var store = map[string] *menu{}
+var store = map[int] *menu{}
 var lock = sync.RWMutex{}
 
 // メニュー取得
@@ -48,9 +49,24 @@ func getAllMenu(w rest.ResponseWriter, r *rest.Request) {
 }
 
 // メニュー追加
+func addMenu (w rest.ResponseWriter, r *rest.Request) {
+	menus := menu{}
+	err := r.DecodeJsonPayload(&menus)
+
+	if err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	lock.Lock()
+	store[menus.Id] = &menus
+	lock.Unlock()
+	w.WriteJson(&menus)
+}
+
 // メニュー削除
 func deleteMenu (w rest.ResponseWriter, r *rest.Request) {
-	code := r.PathParam("id")
+	code := r.PathParam("Id")
 	lock.Lock()
 	delete(store, code)
 	lock.Unlock()
