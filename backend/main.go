@@ -10,7 +10,7 @@ import (
 
 // メニュー構造体
 type menu struct {
-	Id int
+	ID int
 	name string
 	price int
 	text string
@@ -59,7 +59,7 @@ func addMenu (w rest.ResponseWriter, r *rest.Request) {
 	}
 
 	lock.Lock()
-	store[menus.Id] = &menus
+	store[menus.ID] = &menus
 	lock.Unlock()
 	w.WriteJson(&menus)
 }
@@ -78,7 +78,7 @@ var lockOrder = sync.RWMutex{}
 
 // 注文の構造体
 type order struct {
-	Id int
+	ID int
 	Name string
 	Amount int
 	Price int
@@ -93,7 +93,7 @@ func write(w rest.ResponseWriter, r *rest.Request){
 		return
 	}
 	lock.Lock()
-	storeOrder[orders.Id] = &orders
+	storeOrder[orders.ID] = &orders
 	lockOrder.Unlock()
 	w.WriteJson(&orders)
 }
