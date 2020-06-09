@@ -19,5 +19,6 @@ func gormConnect() *gorm.DB {
 		panic(err.Error())
 	}
 	return db
-
 }
+
+func 

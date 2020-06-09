@@ -5,8 +5,19 @@ import (
 	"github.com/ant0ine/go-json-rest/rest"
     "log"
 	"net/http"
-
+	"fmt"
 )
+
+func dbconnection() {
+	db := gormConnect()
+
+	// 全メニュー取得
+	var menus []menu
+	db.Find(&menus)
+	fmt.Println(menus)
+
+	defer db.Close()
+}
 
 // メニュー構造体
 type menu struct {
