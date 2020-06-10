@@ -20,5 +20,3 @@ func gormConnect() *gorm.DB {
 	}
 	return db
 }
-
-func 

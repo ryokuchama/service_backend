@@ -6,21 +6,12 @@ import (
     "log"
 	"net/http"
 	"fmt"
+	"github.com/jinzhu/gorm"
 )
-
-func dbconnection() {
-	db := gormConnect()
-
-	// 全メニュー取得
-	var menus []menu
-	db.Find(&menus)
-	fmt.Println(menus)
-
-	defer db.Close()
-}
 
 // メニュー構造体
 type menu struct {
+	gorm.Model
 	ID int
 	name string
 	price int
@@ -45,66 +36,62 @@ func main () {
 var store = map[int] *menu{}
 var lock = sync.RWMutex{}
 
-// メニュー取得
+// 全メニュー取得
 func getAllMenu(w rest.ResponseWriter, r *rest.Request) {
 	
-	lock.RLock()
-	menus := make([]menu, len(store))
-	i := 0
-	for _, m := range store {
-		menus[i] = *m
-		i++
-	}
-	lock.RUnlock()
-	w.WriteJson(&menus)
+	db := gormConnect()
+	defer db.Close()
+
+	menus := menu{}
+	db.Find(&menus)
+	fmt.Println(menus)
+
+	w.WriteHeader(http.StatusOK)
+	w.WriteJson(&menus)	
 }
 
 // メニュー追加
 func addMenu (w rest.ResponseWriter, r *rest.Request) {
+
+	db := gormConnect()
+	defer db.Close()
+
 	menus := menu{}
-	err := r.DecodeJsonPayload(&menus)
+	
+	db.NewRecord(&menus)
+	db.Create(&menus)
 
-	if err != nil {
-		rest.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	lock.Lock()
-	store[menus.ID] = &menus
-	lock.Unlock()
 	w.WriteJson(&menus)
 }
 
 // メニュー削除
 func deleteMenu (w rest.ResponseWriter, r *rest.Request) {
-	code := r.PathParam("Id")
-	lock.Lock()
-	delete(store, code)
-	lock.Unlock()
-	w.WriteHeader(http.StatusOK)
-}
+	db := gormConnect()
+	defer db.Close()
 
-var storeOrder = map[int] *order{}
-var lockOrder = sync.RWMutex{}
+	menus := menu{}
+	db.Delete(&menus)
+}
 
 // 注文の構造体
 type order struct {
+	gorm.Model
 	ID int
 	Name string
 	Amount int
 	Price int
 	Date string
 }
+
 // オーダー登録
 func write(w rest.ResponseWriter, r *rest.Request){
+
+	db := gormConnect()
+	defer db.Close()
+
 	orders := order{}
-	err := r.DecodeJsonPayload(&orders)
-	if err != nil {
-		rest.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	lock.Lock()
-	storeOrder[orders.ID] = &orders
-	lockOrder.Unlock()
+	db.NewRecord(&orders)
+	db.Create(&orders)
+	
 	w.WriteJson(&orders)
 }
